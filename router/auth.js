@@ -72,9 +72,34 @@ router.post('/register', async (req, res) => {
 
     const userRegister = await user.save()
     if (userRegister) {
+      console.log(userExist)
       res.status(201).json({ message: 'User registered successfully' })
     } else {
       res.status(500).json({ error: 'Failed to register' })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+// login route
+
+router.post('/signin', async (req, res) => {
+  // object destructing
+
+  const { email, password } = req.body
+
+  if (!email || !password) {
+    return res.status(422).json({ error: 'Plz fill all details' })
+  }
+
+  try {
+    const userExist = await User.findOne({ email: email })
+    if (userExist) {
+      console.log(userExist)
+      return res.status(201).json({ message: 'Signin  successfully' })
+    } else {
+      return res.status(422).json({ error: 'Invalid credentials' })
     }
   } catch (error) {
     console.log(error)
