@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
 // get means retrieving data from database using web
 // post means posting data to database using web
@@ -11,6 +13,8 @@ const User = require('../model/userSchema')
 router.get('/', (req, res) => {
   res.send(`Hello Home from router server`)
 })
+
+// using promises
 
 // router.post('/register', (req, res) => {
 //   // object destructing
@@ -64,18 +68,26 @@ router.post('/register', async (req, res) => {
     if (userExist) {
       // console.log(userExist)
       return res.status(422).json({ error: 'This email already used' })
-    }
-    // creating new instance of new user
-    const user = new User({ name, email, phone, work, password, cpassword })
-
-    // to save user input data in database
-
-    const userRegister = await user.save()
-    if (userRegister) {
-      console.log(userExist)
-      res.status(201).json({ message: 'User registered successfully' })
+    } else if (password != cpassword) {
+      return res
+        .status(422)
+        .json({ error: 'Password and confirm password not match' })
     } else {
-      res.status(500).json({ error: 'Failed to register' })
+      // creating new instance of new user
+      const user = new User({ name, email, phone, work, password, cpassword })
+
+      // before save data to db we have to hash the password
+
+      // to save user input data in database
+
+      const userRegister = await user.save()
+
+      if (userRegister) {
+        // console.log(userExist)
+        res.status(201).json({ message: 'User registered successfully' })
+      } else {
+        res.status(500).json({ error: 'Failed to register' })
+      }
     }
   } catch (error) {
     console.log(error)
@@ -95,9 +107,28 @@ router.post('/signin', async (req, res) => {
 
   try {
     const userExist = await User.findOne({ email: email })
+
     if (userExist) {
       console.log(userExist)
-      return res.status(201).json({ message: 'Signin  successfully' })
+
+      const isMatch = await bcrypt.compare(password, userExist.password)
+
+      // generating toekn
+      const token = await userExist.generateAuthToken()
+      console.log(token)
+
+      // storing to cookie
+      res.cookie('jwtoken', token, {
+        //  from now to 30 days later cookie will expire
+        expires: new Date(Date.now() + 25892000000),
+        httpOnly: true,
+      })
+
+      if (!isMatch) {
+        return res.status(422).json({ message: 'Password incorrect' })
+      } else {
+        return res.status(201).json({ message: 'Signin  successfully' })
+      }
     } else {
       return res.status(422).json({ error: 'Invalid credentials' })
     }

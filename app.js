@@ -32,9 +32,10 @@ app.use(require('./router/auth'))
 // app.get('/about', middleware, (req, res) => {
 //   res.send(`Hello About`)
 // })
-// app.get('/contact', (req, res) => {
-//   res.send(`Hello Contact`)
-// })
+app.get('/contact', (req, res) => {
+  // res.cookie('testCookie', 'pramesh')
+  res.send(`Hello Contact`)
+})
 // app.get('/signin', (req, res) => {
 //   res.send(`Hello login`)
 // })
