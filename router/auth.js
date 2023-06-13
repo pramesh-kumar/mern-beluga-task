@@ -7,7 +7,6 @@ const bcrypt = require('bcryptjs')
 // post means posting data to database using web
 
 require('../db/conn')
-
 const User = require('../model/userSchema')
 
 router.get('/', (req, res) => {
@@ -73,10 +72,10 @@ router.post('/register', async (req, res) => {
         .status(422)
         .json({ error: 'Password and confirm password not match' })
     } else {
-      // creating new instance of new user
+      // creating new instance (object) of new user
       const user = new User({ name, email, phone, work, password, cpassword })
 
-      // before save data to db we have to hash the password
+      // before save data to db we have to hash the password in userSchema
 
       // to save user input data in database
 

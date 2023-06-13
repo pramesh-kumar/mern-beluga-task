@@ -24,18 +24,20 @@ app.use(require('./router/auth'))
 //   next()
 // }
 
-// middleware()
+// middleware() // fxn call
 
 // app.get('/', (req, res) => {
 //   res.send(`Hello Home from server from app.js`)
 // })
+
 // app.get('/about', middleware, (req, res) => {
 //   res.send(`Hello About`)
 // })
-app.get('/contact', (req, res) => {
-  // res.cookie('testCookie', 'pramesh')
-  res.send(`Hello Contact`)
-})
+
+// app.get('/contact', (req, res) => {
+//   // res.cookie('testCookie', 'pramesh')
+//   res.send(`Hello Contact`)
+// })
 // app.get('/signin', (req, res) => {
 //   res.send(`Hello login`)
 // })
