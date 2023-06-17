@@ -9,10 +9,6 @@ const bcrypt = require('bcryptjs')
 require('../db/conn')
 const User = require('../model/userSchema')
 
-router.get('/', (req, res) => {
-  res.send(`Hello Home from router server`)
-})
-
 // using promises
 
 // router.post('/register', (req, res) => {
@@ -101,7 +97,7 @@ router.post('/signin', async (req, res) => {
   const { email, password } = req.body
 
   if (!email || !password) {
-    return res.status(422).json({ error: 'Plz fill all details' })
+    return res.status(422).json({ error: 'Plz fill all details !' })
   }
 
   try {

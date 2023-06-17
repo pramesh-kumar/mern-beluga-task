@@ -14,8 +14,12 @@ app.use(express.json())
 
 // const User = require('./model/userSchema')
 
+app.get('/', (req, res) => {
+  res.send(`Hello Home from router server`)
+})
+
 // middleware -> we link the router files to make route is easy
-app.use(require('./router/auth'))
+app.use('/api', require('./router/auth'))
 
 // Middleware
 
