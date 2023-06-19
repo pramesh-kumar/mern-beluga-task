@@ -6,8 +6,10 @@ const bcrypt = require('bcryptjs')
 // get means retrieving data from database using web
 // post means posting data to database using web
 
-require('../db/conn')
+// require('../db/conn')
 const User = require('../model/userSchema')
+
+const authenticate = require('../middleware/authenticate')
 
 // using promises
 
@@ -104,7 +106,7 @@ router.post('/signin', async (req, res) => {
     const userExist = await User.findOne({ email: email })
 
     if (userExist) {
-      console.log(userExist)
+      // console.log(userExist)
 
       const isMatch = await bcrypt.compare(password, userExist.password)
 
@@ -126,6 +128,49 @@ router.post('/signin', async (req, res) => {
       }
     } else {
       return res.status(422).json({ error: 'Invalid credentials' })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+router.get('/about', authenticate, (req, res) => {
+  // console.log(`About Page called !`)
+  // res send to About.jsx in client component of frontend
+  res.send(req.userData)
+})
+
+// get user data for contact and home page
+
+router.get('/getData', authenticate, (req, res) => {
+  res.send(req.userData)
+})
+
+// contact data
+
+router.post('/contact', authenticate, async (req, res) => {
+  try {
+    const { name, email, phone, message } = req.body
+
+    if (!name || !email || !phone || !message) {
+      return res.status(422).json({ error: 'Plz fill all details' })
+    }
+
+    const userContact = await User.findOne({ _id: req.UserID })
+
+    if (userContact) {
+      const userMessage = await userContact.addMessage(
+        name,
+        email,
+        phone,
+        message,
+      )
+      // console.log(userMessage)
+      // console.log(userContact)
+
+      await userContact.save()
+
+      res.status(201).json({ message: 'User contact done successfully !! ' })
     }
   } catch (error) {
     console.log(error)
